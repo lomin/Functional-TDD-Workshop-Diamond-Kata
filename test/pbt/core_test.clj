@@ -8,8 +8,12 @@
 
 ; production
 
+(defn ordinal-lower-letter [c]
+  (- (int c) (int \a)))
+
 (defn diamond [c]
-  ["wrong"])
+  (repeat (+ 1 (* 2 (ordinal-lower-letter c)))
+          "wrong"))
 
 ; test
 
@@ -20,15 +24,12 @@
 (check-prop only-lower-letter-prop [c]
   {:failed    (or (< (int c) (int \a))
                   (> (int c) (int \z)))
-   :fail-info {:char c
+   :fail-info {:char      c
                :int-value (int c)}})
-
-(defn ordinal-lower-letter [c]
-  (- (int c) (int \a)))
 
 (check-prop height-is-2x-1-prop [c]
   {:failed    (not= (count (diamond c))
-                    (dec (* 2 (ordinal-lower-letter c))))
+                    (inc (* 2 (ordinal-lower-letter c))))
    :fail-info {:char      c
                :int-value (int c)
                :height    (count (diamond c))}})

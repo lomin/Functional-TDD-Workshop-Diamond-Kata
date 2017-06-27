@@ -13,13 +13,17 @@
 
 (defn diamond [c]
   (repeat (+ 1 (* 2 (ordinal-lower-letter c)))
-          "wrong"))
+          "ab"))
 
 ; test
 
 (def lower-letter-generator
   "Generate lowercase characters"
   (gen/fmap char (gen/choose 97 122)))
+
+(def lower-letter-generator-without-a
+  "Generate lowercase characters"
+  (gen/fmap char (gen/choose 98 122)))
 
 (check-prop only-lower-letter-prop [c]
   {:failed    (or (< (int c) (int \a))
@@ -34,9 +38,22 @@
                :int-value (int c)
                :height    (count (diamond c))}})
 
+(defn lines-with-not-2-chars [xs]
+  (filter #(not= 2 (count %)) (map set xs)))
+
+
+(check-prop line-contains-exactly-one-letter-and-blank [c]
+  {:failed    (seq (lines-with-not-2-chars (diamond c)))
+   :fail-info {:char      c
+               :int-value (int c)
+               :height    (count (diamond c))}})
+
 ; custom runner
 
 (deftest ^:focused a-test
   (is (= nil (check (prop/for-all* [lower-letter-generator]
                                    #(and (only-lower-letter-prop %)
-                                         (height-is-2x-1-prop %)))))))
+                                         (height-is-2x-1-prop %))))))
+  (is (= nil (check (prop/for-all* [lower-letter-generator-without-a]
+                                   #(and
+                                         (line-contains-exactly-one-letter-and-blank %)))))))

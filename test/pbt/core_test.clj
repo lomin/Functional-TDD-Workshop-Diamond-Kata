@@ -6,12 +6,15 @@
             [clojure.test.check.generators :as gen]
             [pbt.core :refer :all]))
 
-(check-prop example-prop [s]
-            {:failed    (= "" s)
-             :fail-info {:string s}})
+
+(def lower-letter-generator
+  (gen/fmap char (gen/choose 97 122)))
+
+(check-prop only-lower-letter-prop [c]
+  {:failed    (or (< (int c) (int \a))
+                  (> (int c) (int \z)))
+   :fail-info {:char c
+               :int-value (int c)}})
 
 (deftest ^:focused a-test
-  (is (= nil (check
-               (prop/for-all* [gen/string-ascii] example-prop)
-               500
-               6))))
+  (is (= nil (check (prop/for-all* [lower-letter-generator] only-lower-letter-prop)))))

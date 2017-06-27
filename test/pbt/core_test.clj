@@ -13,7 +13,7 @@
 
 (defn diamond [c]
   (repeat (+ 1 (* 2 (ordinal-lower-letter c)))
-          "ab"))
+          "a "))
 
 ; test
 
@@ -41,12 +41,16 @@
 (defn lines-with-not-2-chars [xs]
   (filter #(not= 2 (count %)) (map set xs)))
 
+(defn lines-without-whitespaces [xs]
+  (filter #(not (contains? % \space)) (map set xs)))
 
-(check-prop line-contains-exactly-one-letter-and-blank [c]
+(check-prop line-contains-exactly-two-letters [c]
   {:failed    (seq (lines-with-not-2-chars (diamond c)))
-   :fail-info {:char      c
-               :int-value (int c)
-               :height    (count (diamond c))}})
+   :fail-info {:char      c}})
+
+(check-prop line-contains-whitespaces [c]
+  {:failed    (seq (lines-without-whitespaces (diamond c)))
+   :fail-info {:char      c}})
 
 ; custom runner
 
@@ -56,4 +60,5 @@
                                          (height-is-2x-1-prop %))))))
   (is (= nil (check (prop/for-all* [lower-letter-generator-without-a]
                                    #(and
-                                         (line-contains-exactly-one-letter-and-blank %)))))))
+                                      (line-contains-exactly-two-letters %)
+                                      (line-contains-whitespaces %)))))))

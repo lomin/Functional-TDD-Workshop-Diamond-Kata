@@ -45,12 +45,10 @@
   (filter #(not (contains? % \space)) (map set xs)))
 
 (check-prop line-contains-exactly-two-letters [c]
-  {:failed    (seq (lines-with-not-2-chars (diamond c)))
-   :fail-info {:char      c}})
+  {:failed (seq (lines-with-not-2-chars (diamond c)))})
 
 (check-prop line-contains-whitespaces [c]
-  {:failed    (seq (lines-without-whitespaces (diamond c)))
-   :fail-info {:char      c}})
+  {:failed (seq (lines-without-whitespaces (diamond c)))})
 
 ; custom runner
 

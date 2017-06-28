@@ -16,11 +16,12 @@
   (char (+ ord (int \a))))
 
 (defn ordinals-of-diamond [c]
-  (concat (range (ordinal-lower-letter \a)
-                 (ordinal-lower-letter c))
-          [(ordinal-lower-letter c)]
-          (reverse (range (ordinal-lower-letter \a)
-                          (ordinal-lower-letter c)))))
+  (concat
+    [(ordinal-lower-letter c)]
+    (shuffle (range (ordinal-lower-letter \a)
+                    (ordinal-lower-letter c)))
+    (range (ordinal-lower-letter \a)
+           (* 1 (ordinal-lower-letter c)))))
 
 ; char -> [String]
 (defn diamond [c]
@@ -73,7 +74,8 @@
           (map frequencies lines))
   )
 
-(deftest ^:focused letters-of-diamond-test
+; dropped test because of Peter being evil changing code to what the test aks us.
+(deftest letters-of-diamond-test
   (is (= [0 1 0] (ordinals-of-diamond \b)))
   )
 

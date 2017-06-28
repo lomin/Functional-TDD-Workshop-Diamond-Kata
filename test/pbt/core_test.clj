@@ -17,11 +17,11 @@
 
 (defn ordinals-of-diamond [c]
   (concat
-    [(ordinal-lower-letter c)]
-    (shuffle (range (ordinal-lower-letter \a)
-                    (ordinal-lower-letter c)))
     (range (ordinal-lower-letter \a)
-           (* 1 (ordinal-lower-letter c)))))
+           (ordinal-lower-letter c))
+    [(ordinal-lower-letter c)]
+    (reverse (range (ordinal-lower-letter \a)
+                    (ordinal-lower-letter c)))))
 
 ; char -> [String]
 (defn diamond [c]
@@ -29,6 +29,9 @@
        (map ordinal-to-char (ordinals-of-diamond c))))
 
 ; test
+
+; many tests. it seems we can make smaller steps with properties than with examples.
+; with examples there are 3 tests and we are done.
 
 (def lower-letter-generator
   "Generate lowercase characters"
@@ -93,6 +96,14 @@
    :fail-info {:x-characters-of (characters-of (diamond c))}
    })
 
+(check-prop diamond-is-mirrored-on-horizontal-axis [c]
+  {:failed    (not= (diamond c)
+                    (reverse (diamond c)))
+   ; the expected output is not helpful because this is not an example. the expected also looks wrong.
+   :assertion {:got      (reverse (diamond c))
+               :expected (diamond c)}
+   })
+
 ; custom runner
 
 ; TODO create example for a, remove lower-letter-generator and test group.
@@ -107,4 +118,5 @@
                                          (height-is-2x+1-prop %)
                                          (line-contains-exactly-two-letters %)
                                          (line-contains-whitespaces %)
-                                         (diamond-contains-all-characters %)))))))
+                                         (diamond-contains-all-characters %)
+                                         (diamond-is-mirrored-on-horizontal-axis %)))))))

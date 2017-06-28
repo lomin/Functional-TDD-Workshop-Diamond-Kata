@@ -21,42 +21,47 @@
   "Generate lowercase characters"
   (gen/fmap char (gen/choose 97 122)))
 
-(def lower-letter-generator-without-a
-  "Generate lowercase characters"
-  (gen/fmap char (gen/choose 98 122)))
-
 (check-prop only-lower-letter-prop [c]
   {:failed    (or (< (int c) (int \a))
                   (> (int c) (int \z)))
    :fail-info {:char      c
                :int-value (int c)}})
 
-(check-prop height-is-2x-1-prop [c]
-  {:failed    (not= (count (diamond c))
-                    (inc (* 2 (ordinal-lower-letter c))))
-   :fail-info {:char      c
-               :int-value (int c)
-               :height    (count (diamond c))}})
+(check-prop height-is-2x+1-prop [c]
+  (let [expected-height (inc (* 2 (ordinal-lower-letter c)))]
+    {:failed    (not= (count (diamond c))                   ; styling: split after 2nd element of list
+                      expected-height)
+     :fail-info {:char            c
+                 :int-value       (int c)
+                 :actual-height   (count (diamond c))
+                 :expected-height expected-height}}))
+
+(def lower-letter-generator-without-a
+  "Generate lowercase characters"
+  (gen/fmap char (gen/choose 98 122)))
 
 (defn lines-with-not-2-chars [xs]
-  (filter #(not= 2 (count %)) (map set xs)))
-
-(defn lines-without-whitespaces [xs]
-  (filter #(not (contains? % \space)) (map set xs)))
+  (filter #(not= 2 (count %))
+          (map set xs)))
 
 (check-prop line-contains-exactly-two-letters [c]
   {:failed (seq (lines-with-not-2-chars (diamond c)))})
+
+(defn lines-without-whitespaces [xs]
+  (filter #(not (contains? % \space))
+          (map set xs)))
 
 (check-prop line-contains-whitespaces [c]
   {:failed (seq (lines-without-whitespaces (diamond c)))})
 
 ; custom runner
 
-(deftest ^:focused a-test
+(deftest ^:focused all-letters-tests2
   (is (= nil (check (prop/for-all* [lower-letter-generator]
                                    #(and (only-lower-letter-prop %)
-                                         (height-is-2x-1-prop %))))))
+                                         (height-is-2x+1-prop %)))))))
+
+(deftest ^:focused no-a-letters-tests
   (is (= nil (check (prop/for-all* [lower-letter-generator-without-a]
-                                   #(and
-                                      (line-contains-exactly-two-letters %)
-                                      (line-contains-whitespaces %)))))))
+                                   #(and (line-contains-exactly-two-letters %)
+                                         (line-contains-whitespaces %)))))))

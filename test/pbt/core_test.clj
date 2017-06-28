@@ -72,9 +72,9 @@
 (check-prop diamond-contains-all-characters [c]
   {:failed (not= (count (characters-of (diamond c)))
                  (inc-for-whitespace (inc (ordinal-lower-letter c))))
-   :fail-info { :x-characters-of (characters-of (diamond c))
-                :actual          (count (characters-of (diamond c)))
-                :expected        (inc-for-whitespace (inc (ordinal-lower-letter c)))}
+   :assertion {:got      (count (characters-of (diamond c)))
+               :expected (inc-for-whitespace (inc (ordinal-lower-letter c)))}
+   :fail-info { :x-characters-of (characters-of (diamond c)) }
    })
 
 ; custom runner

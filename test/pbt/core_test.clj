@@ -17,11 +17,11 @@
 
 (defn ordinals-of-diamond [c]
   (concat
-    (range (ordinal-lower-letter \a)
-           (ordinal-lower-letter c))
-    [(ordinal-lower-letter c)]
     (reverse (range (ordinal-lower-letter \a)
-                    (ordinal-lower-letter c)))))
+                    (ordinal-lower-letter c)))
+    [(ordinal-lower-letter c)]
+    (range (ordinal-lower-letter \a)
+           (ordinal-lower-letter c))))
 
 ; char -> [String]
 (defn diamond [c]

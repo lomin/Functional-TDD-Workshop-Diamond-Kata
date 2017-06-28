@@ -33,6 +33,10 @@
 ; many tests. it seems we can make smaller steps with properties than with examples.
 ; with examples there are 3 tests and we are done.
 
+; smell: property is more complex as production code.
+; helper functions for properties used, maybe on the edge...
+; always look for simple properties.
+
 (def lower-letter-generator
   "Generate lowercase characters"
   (gen/fmap char (gen/choose 97 122)))
@@ -104,6 +108,18 @@
                :expected (diamond c)}
    })
 
+(defn upper-diamond [c]
+  (take (inc (ordinal-lower-letter c)) (diamond c)))
+
+(check-prop upper-diamond-has-letters-in-sequence [c]
+  {:failed    (not= (map #(first (disj (set %) \space))
+                         (upper-diamond c))
+                    (map ordinal-to-char (range (inc (ordinal-lower-letter c)))))
+   :assertion {:got      (map #(first (disj (set %) \space))
+                              (upper-diamond c))
+               :expected (map ordinal-to-char (range (inc (ordinal-lower-letter c))))}
+   })
+
 ; custom runner
 
 ; TODO create example for a, remove lower-letter-generator and test group.
@@ -118,5 +134,6 @@
                                          (height-is-2x+1-prop %)
                                          (line-contains-exactly-two-letters %)
                                          (line-contains-whitespaces %)
-                                         (diamond-contains-all-characters %)
-                                         (diamond-is-mirrored-on-horizontal-axis %)))))))
+                                         (diamond-contains-all-characters %) ; would be ok for upper diamond
+                                         (diamond-is-mirrored-on-horizontal-axis %)
+                                         (upper-diamond-has-letters-in-sequence %)))))))

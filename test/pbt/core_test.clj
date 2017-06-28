@@ -12,10 +12,20 @@
 (defn ordinal-lower-letter [c]
   (- (int c) (int \a)))
 
+(defn ordinal-to-char [ord]
+  (char (+ ord (int \a))))
+
+(defn ordinals-of-diamond [c]
+  (concat (range (ordinal-lower-letter \a)
+                 (ordinal-lower-letter c))
+          [(ordinal-lower-letter c)]
+          (reverse (range (ordinal-lower-letter \a)
+                          (ordinal-lower-letter c)))))
+
 ; char -> [String]
 (defn diamond [c]
-  (repeat (+ 1 (* 2 (ordinal-lower-letter c)))
-          "a "))
+  (map #(str % " ")
+       (map ordinal-to-char (ordinals-of-diamond c))))
 
 ; test
 
@@ -63,6 +73,10 @@
           (map frequencies lines))
   )
 
+(deftest ^:focused letters-of-diamond-test
+  (is (= [0 1 0] (ordinals-of-diamond \b)))
+  )
+
 (deftest ^:focused characters-of-test
   ; explore the language in tests
   (is (= {\t 1} (frequencies "t")))
@@ -70,11 +84,11 @@
   )
 
 (check-prop diamond-contains-all-characters [c]
-  {:failed (not= (count (characters-of (diamond c)))
-                 (inc-for-whitespace (inc (ordinal-lower-letter c))))
+  {:failed    (not= (count (characters-of (diamond c)))
+                    (inc-for-whitespace (inc (ordinal-lower-letter c))))
    :assertion {:got      (count (characters-of (diamond c)))
                :expected (inc-for-whitespace (inc (ordinal-lower-letter c)))}
-   :fail-info { :x-characters-of (characters-of (diamond c)) }
+   :fail-info {:x-characters-of (characters-of (diamond c))}
    })
 
 ; custom runner

@@ -111,11 +111,22 @@
 (defn upper-diamond [c]
   (take (inc (ordinal-lower-letter c)) (diamond c)))
 
+(defn chars-not-space [s]
+  (remove (partial = \space) s))
+; old code: (disj (set s) \space)
+; note: this code is generic, not depending on diamond, should be in "s" which is String in Clojure.
+
+(defn get-first-char-not-space-from [s]
+  (first (chars-not-space s)))
+; ok because this is not near the problem/solution
+; note: this is simple clojure code, could inline it because name is so long as code itself.
+; after extracting chars-not-space, this is too long and should be inlined. TODO inline.
+
 (check-prop upper-diamond-has-letters-in-sequence [c]
-  {:failed    (not= (map #(first (disj (set %) \space))
+  {:failed    (not= (map get-first-char-not-space-from
                          (upper-diamond c))
                     (map ordinal-to-char (range (inc (ordinal-lower-letter c)))))
-   :assertion {:got      (map #(first (disj (set %) \space))
+   :assertion {:got      (map get-first-char-not-space-from
                               (upper-diamond c))
                :expected (map ordinal-to-char (range (inc (ordinal-lower-letter c))))}
    })

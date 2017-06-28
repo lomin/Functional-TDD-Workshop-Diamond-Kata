@@ -56,12 +56,15 @@
 
 ; custom runner
 
-(deftest ^:focused all-letters-tests2
+; TODO create example for a, remove lower-letter-generator and test group.
+(deftest ^:focused all-letters-tests
   (is (= nil (check (prop/for-all* [lower-letter-generator]
                                    #(and (only-lower-letter-prop %)
                                          (height-is-2x+1-prop %)))))))
 
 (deftest ^:focused no-a-letters-tests
   (is (= nil (check (prop/for-all* [lower-letter-generator-without-a]
-                                   #(and (line-contains-exactly-two-letters %)
+                                   #(and (only-lower-letter-prop %)
+                                         (height-is-2x+1-prop %)
+                                         (line-contains-exactly-two-letters %)
                                          (line-contains-whitespaces %)))))))

@@ -8,9 +8,11 @@
 
 ; production
 
+; char -> int
 (defn ordinal-lower-letter [c]
   (- (int c) (int \a)))
 
+; char -> [String]
 (defn diamond [c]
   (repeat (+ 1 (* 2 (ordinal-lower-letter c)))
           "a "))
@@ -54,6 +56,27 @@
 (check-prop line-contains-whitespaces [c]
   {:failed (seq (lines-without-whitespaces (diamond c)))})
 
+(def inc-for-whitespace inc)
+
+(defn characters-of [lines]
+  (reduce (partial merge-with +)
+          (map frequencies lines))
+  )
+
+(deftest ^:focused characters-of-test
+  ; explore the language in tests
+  (is (= {\t 1} (frequencies "t")))
+  (is (= {\t 2} (merge-with + {\t 1} {\t 1})))
+  )
+
+(check-prop diamond-contains-all-characters [c]
+  {:failed (not= (count (characters-of (diamond c)))
+                 (inc-for-whitespace (inc (ordinal-lower-letter c))))
+   :fail-info { :x-characters-of (characters-of (diamond c))
+                :actual          (count (characters-of (diamond c)))
+                :expected        (inc-for-whitespace (inc (ordinal-lower-letter c)))}
+   })
+
 ; custom runner
 
 ; TODO create example for a, remove lower-letter-generator and test group.
@@ -67,4 +90,5 @@
                                    #(and (only-lower-letter-prop %)
                                          (height-is-2x+1-prop %)
                                          (line-contains-exactly-two-letters %)
-                                         (line-contains-whitespaces %)))))))
+                                         (line-contains-whitespaces %)
+                                         (diamond-contains-all-characters %)))))))
